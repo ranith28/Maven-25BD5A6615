@@ -54,6 +54,7 @@ pipeline {
             mail to: 'userkmit11@gmail.com',
                  subject: "Failure: Pipeline ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]",
                  body: "The build has failed.\n\nCheck the console output: ${env.BUILD_URL}console"
+            
         }
     }
 }
