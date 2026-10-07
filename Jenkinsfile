@@ -31,14 +31,32 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('MavenWebProject25BD5A6615') {
-                   bat 'docker build -t ranith615/maven-web-app:%BUILD_NUMBER% .'
+                    bat 'docker build -t ranith615/maven-web-app:%BUILD_NUMBER% .'
                 }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                bat 'docker push ranith615/maven-web-app:%BUILD_NUMBER%'
             }
         }
 
         stage('Docker Run') {
             steps {
-                bat 'docker run -d -p 8094:8080 webimage'
+                bat 'docker run -d -p 8094:8080 ranith615/maven-web-app:%BUILD_NUMBER%'
             }
         }
     }
@@ -54,7 +72,6 @@ pipeline {
             mail to: 'userkmit11@gmail.com',
                  subject: "Failure: Pipeline ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]",
                  body: "The build has failed.\n\nCheck the console output: ${env.BUILD_URL}console"
-            
         }
     }
 }
