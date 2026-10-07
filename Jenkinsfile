@@ -31,7 +31,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('MavenWebProject25BD5A6615') {
-                    bat 'docker build -t webimage .'
+                   bat 'docker build -t ranith615/maven-web-app:%BUILD_NUMBER% .'
                 }
             }
         }
